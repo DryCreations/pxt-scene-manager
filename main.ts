@@ -1,63 +1,53 @@
 //% weight=100 color=#0fbc11 icon="\uf1b2" block="Scene Manager"
 namespace sceneManager {
-    // Screen data store - simplified to just track screen names
-    interface ScreenData {
+    interface SceneData {
         name: string;
     }
     
-    // Store screens in a simple object dictionary
-    let screens: { [key: string]: ScreenData } = {};
-    let currentScreenId: string = null;
+    let scenes: { [key: string]: SceneData } = {};
+    let currentSceneId: string = null;
     
-    // Store handlers by screen ID
     let setupHandlers: { [key: string]: (() => void)[] } = {};
     let cleanupHandlers: { [key: string]: (() => void)[] } = {};
 
-    // Helper function to ensure a screen exists
-    function ensureScreenExists(name: string): void {
-        if (!screens[name]) {
-            screens[name] = {
+    function ensureSceneExists(name: string): void {
+        if (!scenes[name]) {
+            scenes[name] = {
                 name: name
             };
         }
     }
 
     /**
-     * Check if a screen with the given name exists
-     * @param name The name of the screen to check
+     * Check if a scene with the given name exists
      */
-    //% blockId=sceneManagerScreenExists
-    //% block="screen named $name exists"
+    //% blockId=sceneManagerSceneExists
+    //% block="scene named $name exists"
     //% name.defl="Main"
-    export function screenExists(name: string): boolean {
-        return !!screens[name];
+    export function sceneExists(name: string): boolean {
+        return !!scenes[name];
     }
 
     /**
-     * Transition to the screen with the given name
-     * @param name The name of the screen to transition to
+     * Transition to the scene with the given name
      */
     //% blockId=sceneManagerTransitionTo
-    //% block="transition to screen named $name"
+    //% block="transition to scene named $name"
     //% name.defl="Main"
     export function transitionTo(name: string): void {
-        // Create the screen if it doesn't exist
-        ensureScreenExists(name);
+        ensureSceneExists(name);
         
-        // Run cleanup on current screen if it exists
-        if (currentScreenId && cleanupHandlers[currentScreenId]) {
-            const handlers = cleanupHandlers[currentScreenId];
+        if (currentSceneId && cleanupHandlers[currentSceneId]) {
+            const handlers = cleanupHandlers[currentSceneId];
             for (const handler of handlers) {
                 handler();
             }
         }
         
-        // Set the new current screen
-        currentScreenId = name;
+        currentSceneId = name;
         
-        // Run setup on the new screen
-        if (setupHandlers[currentScreenId]) {
-            const handlers = setupHandlers[currentScreenId];
+        if (setupHandlers[currentSceneId]) {
+            const handlers = setupHandlers[currentSceneId];
             for (const handler of handlers) {
                 handler();
             }
@@ -65,47 +55,124 @@ namespace sceneManager {
     }
 
     /**
-     * Get the name of the current screen
+     * Get the name of the current scene
      */
-    //% blockId=sceneManagerGetCurrentScreen
-    //% block="current screen name"
-    export function getCurrentScreenName(): string {
-        return currentScreenId;
+    //% blockId=sceneManagerGetCurrentScene
+    //% block="current scene name"
+    export function getCurrentSceneName(): string {
+        return currentSceneId;
     }
 
     /**
-     * Run this code when entering the screen with the given name
-     * @param screenName The name of the screen to set up
+     * Run this code when entering the scene
      */
-    //% blockId=sceneManagerOnScreenSetup
-    //% block="on screen named $screenName setup" 
-    //% screenName.defl="Main"
+    //% blockId=sceneManagerOnSceneSetup
+    //% block="on scene named $sceneName setup" 
+    //% sceneName.defl="Main"
     //% weight=95
     //% blockAllowMultiple=true
-    export function onScreenSetup(screenName: string, handler: () => void): void {
-        ensureScreenExists(screenName);
+    export function onSceneSetup(sceneName: string, handler: () => void): void {
+        ensureSceneExists(sceneName);
         
-        if (!setupHandlers[screenName]) {
-            setupHandlers[screenName] = [];
+        if (!setupHandlers[sceneName]) {
+            setupHandlers[sceneName] = [];
         }
-        setupHandlers[screenName].push(handler);
+        setupHandlers[sceneName].push(handler);
     }
 
     /**
-     * Run this code when leaving the screen with the given name
-     * @param screenName The name of the screen to clean up
+     * Run this code when leaving the scene
      */
-    //% blockId=sceneManagerOnScreenCleanup
-    //% block="on screen named $screenName cleanup"
-    //% screenName.defl="Main"
+    //% blockId=sceneManagerOnSceneCleanup
+    //% block="on scene named $sceneName cleanup"
+    //% sceneName.defl="Main"
     //% weight=90
     //% blockAllowMultiple=true
-    export function onScreenCleanup(screenName: string, handler: () => void): void {
-        ensureScreenExists(screenName);
+    export function onSceneCleanup(sceneName: string, handler: () => void): void {
+        ensureSceneExists(sceneName);
         
-        if (!cleanupHandlers[screenName]) {
-            cleanupHandlers[screenName] = [];
+        if (!cleanupHandlers[sceneName]) {
+            cleanupHandlers[sceneName] = [];
         }
-        cleanupHandlers[screenName].push(handler);
+        cleanupHandlers[sceneName].push(handler);
+    }
+
+    /**
+     * Run this code on each game update while the scene is active
+     */
+    //% blockId=sceneManagerOnSceneUpdate
+    //% block="on scene named $sceneName update"
+    //% sceneName.defl="Main"
+    //% weight=80
+    //% blockAllowMultiple=true
+    export function onSceneUpdate(sceneName: string, handler: () => void): void {
+        ensureSceneExists(sceneName);
+        
+        game.onUpdate(() => {
+            if (currentSceneId === sceneName) {
+                handler();
+            }
+        });
+    }
+
+    /**
+     * Run this code repeatedly while the scene is active
+     */
+    //% blockId=sceneManagerOnSceneForever
+    //% block="on scene named $sceneName forever"
+    //% sceneName.defl="Main"
+    //% weight=85
+    //% blockAllowMultiple=true
+    export function onSceneForever(sceneName: string, handler: () => void): void {
+        ensureSceneExists(sceneName);
+        
+        forever(() => {
+            if (currentSceneId === sceneName) {
+                handler();
+            }
+        });
+    }
+
+    /**
+     * Run this code periodically while the scene is active
+     */
+    //% blockId=sceneManagerOnSceneUpdateInterval
+    //% block="on scene named $sceneName every $ms ms"
+    //% sceneName.defl="Main"
+    //% ms.defl=500
+    //% weight=75
+    //% blockAllowMultiple=true
+    export function onSceneUpdateInterval(sceneName: string, ms: number, handler: () => void): void {
+        ensureSceneExists(sceneName);
+        
+        game.onUpdateInterval(ms, () => {
+            if (currentSceneId === sceneName) {
+                handler();
+            }
+        });
+    }
+
+    /**
+     * Run this code when a controller button event occurs while the scene is active
+     */
+    //% blockId=sceneManagerOnSceneButtonEvent
+    //% block="on scene named $sceneName $btn $event"
+    //% sceneName.defl="Main"
+    //% btn.fieldEditor="gridpicker"
+    //% btn.fieldOptions.columns=4
+    //% btn.fieldOptions.tooltips="false"
+    //% event.fieldEditor="gridpicker"
+    //% event.fieldOptions.columns=3
+    //% event.fieldOptions.tooltips="false"
+    //% weight=70
+    //% blockAllowMultiple=true
+    export function onSceneButtonEvent(sceneName: string, btn: controller.Button, event: ControllerButtonEvent, handler: () => void): void {
+        ensureSceneExists(sceneName);
+        
+        btn.addEventListener(event, () => {
+            if (currentSceneId === sceneName) {
+                handler();
+            }
+        });
     }
 }

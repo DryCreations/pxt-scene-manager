@@ -1,4 +1,5 @@
-//% weight=100 color=#0fbc11 icon="\uf1b2" block="Scene Manager"
+//% weight=100 color=#6d5ba4 icon="\uf24d" block="Scene Manager"
+//% groups="['Scene Management', 'Scene Lifecycle', 'Game Loop', 'Controller', 'Sprites', 'Info', 'Multiplayer']"
 namespace sceneManager {
     interface SceneData {
         name: string;
@@ -25,6 +26,7 @@ namespace sceneManager {
     //% blockId=sceneManagerSceneExists
     //% block="scene named $name exists"
     //% name.defl="Main"
+    //% weight=200
     //% group="Scene Management"
     export function sceneExists(name: string): boolean {
         return !!scenes[name];
@@ -37,6 +39,7 @@ namespace sceneManager {
     //% blockId=sceneManagerTransitionTo
     //% block="transition to scene named $name"
     //% name.defl="Main"
+    //% weight=190
     //% group="Scene Management"
     export function transitionTo(name: string): void {
         ensureSceneExists(name);
@@ -63,6 +66,7 @@ namespace sceneManager {
      */
     //% blockId=sceneManagerGetCurrentScene
     //% block="current scene name"
+    //% weight=180
     //% group="Scene Management"
     export function getCurrentSceneName(): string {
         return currentSceneId;
@@ -76,7 +80,7 @@ namespace sceneManager {
     //% blockId=sceneManagerOnSceneSetup
     //% block="on scene named $sceneName setup" 
     //% sceneName.defl="Main"
-    //% weight=95
+    //% weight=170
     //% blockAllowMultiple=true
     //% group="Scene Lifecycle"
     export function onSceneSetup(sceneName: string, handler: () => void): void {
@@ -96,7 +100,7 @@ namespace sceneManager {
     //% blockId=sceneManagerOnSceneCleanup
     //% block="on scene named $sceneName cleanup"
     //% sceneName.defl="Main"
-    //% weight=90
+    //% weight=160
     //% blockAllowMultiple=true
     //% group="Scene Lifecycle"
     export function onSceneCleanup(sceneName: string, handler: () => void): void {
@@ -116,7 +120,7 @@ namespace sceneManager {
     //% blockId=sceneManagerOnSceneUpdate
     //% block="on scene named $sceneName update"
     //% sceneName.defl="Main"
-    //% weight=80
+    //% weight=150
     //% blockAllowMultiple=true
     //% group="Game Loop"
     export function onSceneUpdate(sceneName: string, handler: () => void): void {
@@ -137,7 +141,7 @@ namespace sceneManager {
     //% blockId=sceneManagerOnSceneForever
     //% block="on scene named $sceneName forever"
     //% sceneName.defl="Main"
-    //% weight=85
+    //% weight=140
     //% blockAllowMultiple=true
     //% group="Game Loop"
     export function onSceneForever(sceneName: string, handler: () => void): void {
@@ -160,7 +164,7 @@ namespace sceneManager {
     //% block="on scene named $sceneName every $ms ms"
     //% sceneName.defl="Main"
     //% ms.defl=500
-    //% weight=75
+    //% weight=130
     //% blockAllowMultiple=true
     //% group="Game Loop"
     export function onSceneUpdateInterval(sceneName: string, ms: number, handler: () => void): void {
@@ -189,7 +193,7 @@ namespace sceneManager {
     //% event.fieldEditor="gridpicker"
     //% event.fieldOptions.columns=3
     //% event.fieldOptions.tooltips="false"
-    //% weight=70
+    //% weight=120
     //% blockAllowMultiple=true
     //% group="Controller"
     export function onSceneButtonEvent(sceneName: string, btn: controller.Button, event: ControllerButtonEvent, handler: () => void): void {
@@ -212,7 +216,7 @@ namespace sceneManager {
     //% blockId=sceneManagerOnSceneOverlap
     //% block="on scene named $sceneName sprite $spriteKind overlaps $otherKind"
     //% sceneName.defl="Main"
-    //% weight=65
+    //% weight=110
     //% blockAllowMultiple=true
     //% spriteKind.shadow=spritekind
     //% otherKind.shadow=spritekind
@@ -236,7 +240,7 @@ namespace sceneManager {
     //% blockId=sceneManagerOnSceneSpriteDestroyed
     //% block="on scene named $sceneName sprite $spriteKind destroyed"
     //% sceneName.defl="Main"
-    //% weight=64
+    //% weight=100
     //% blockAllowMultiple=true
     //% spriteKind.shadow=spritekind
     //% group="Sprites"
@@ -259,7 +263,7 @@ namespace sceneManager {
     //% blockId=sceneManagerOnSceneHitWall
     //% block="on scene named $sceneName sprite $spriteKind hit wall"
     //% sceneName.defl="Main"
-    //% weight=63
+    //% weight=90
     //% blockAllowMultiple=true
     //% spriteKind.shadow=spritekind
     //% group="Sprites"
@@ -281,7 +285,7 @@ namespace sceneManager {
     //% blockId=sceneManagerOnSceneLifeZero
     //% block="on scene named $sceneName life zero"
     //% sceneName.defl="Main"
-    //% weight=62
+    //% weight=80
     //% blockAllowMultiple=true
     //% group="Info"
     export function onSceneLifeZero(sceneName: string, handler: () => void): void {
@@ -302,7 +306,7 @@ namespace sceneManager {
     //% blockId=sceneManagerOnSceneCountdownEnd
     //% block="on scene named $sceneName countdown end"
     //% sceneName.defl="Main"
-    //% weight=61
+    //% weight=70
     //% blockAllowMultiple=true
     //% group="Info"
     export function onSceneCountdownEnd(sceneName: string, handler: () => void): void {
@@ -356,7 +360,7 @@ namespace sceneManager {
     //% event.fieldEditor="gridpicker"
     //% event.fieldOptions.columns=3
     //% event.fieldOptions.tooltips="false"
-    //% weight=59
+    //% weight=50
     //% blockAllowMultiple=true
     //% group="Multiplayer"
     export function onScenePlayerButtonEvent(sceneName: string, player: controller.Controller, btn: ControllerButton, event: ControllerButtonEvent, handler: () => void): void {
@@ -381,7 +385,7 @@ namespace sceneManager {
     //% sceneName.defl="Main"
     //% player.shadow=multiplayer_player_picker
     //% state.shadow=controller_event_value_picker
-    //% weight=58
+    //% weight=40
     //% blockAllowMultiple=true
     //% group="Multiplayer"
     export function onSceneControllerEvent(sceneName: string, player: controller.Controller, state: ControllerEvent, handler: () => void): void {
@@ -406,7 +410,7 @@ namespace sceneManager {
     //% sceneName.defl="Main"
     //% player.shadow=multiplayer_player_picker
     //% score.defl=100
-    //% weight=57
+    //% weight=30
     //% blockAllowMultiple=true
     //% group="Multiplayer"
     export function onScenePlayerScore(sceneName: string, player: info.PlayerInfo, score: number, handler: () => void): void {
@@ -429,7 +433,7 @@ namespace sceneManager {
     //% block="on scene named $sceneName player $player life zero"
     //% sceneName.defl="Main"
     //% player.shadow=multiplayer_player_picker
-    //% weight=56
+    //% weight=20
     //% blockAllowMultiple=true
     //% group="Multiplayer"
     export function onScenePlayerLifeZero(sceneName: string, player: info.PlayerInfo, handler: () => void): void {

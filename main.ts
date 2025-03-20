@@ -24,6 +24,7 @@ namespace sceneManager {
     //% blockId=sceneManagerSceneExists
     //% block="scene named $name exists"
     //% name.defl="Main"
+    //% group="Scene Management"
     export function sceneExists(name: string): boolean {
         return !!scenes[name];
     }
@@ -34,6 +35,7 @@ namespace sceneManager {
     //% blockId=sceneManagerTransitionTo
     //% block="transition to scene named $name"
     //% name.defl="Main"
+    //% group="Scene Management"
     export function transitionTo(name: string): void {
         ensureSceneExists(name);
         
@@ -59,6 +61,7 @@ namespace sceneManager {
      */
     //% blockId=sceneManagerGetCurrentScene
     //% block="current scene name"
+    //% group="Scene Management"
     export function getCurrentSceneName(): string {
         return currentSceneId;
     }
@@ -71,6 +74,7 @@ namespace sceneManager {
     //% sceneName.defl="Main"
     //% weight=95
     //% blockAllowMultiple=true
+    //% group="Scene Lifecycle"
     export function onSceneSetup(sceneName: string, handler: () => void): void {
         ensureSceneExists(sceneName);
         
@@ -88,6 +92,7 @@ namespace sceneManager {
     //% sceneName.defl="Main"
     //% weight=90
     //% blockAllowMultiple=true
+    //% group="Scene Lifecycle"
     export function onSceneCleanup(sceneName: string, handler: () => void): void {
         ensureSceneExists(sceneName);
         
@@ -105,6 +110,7 @@ namespace sceneManager {
     //% sceneName.defl="Main"
     //% weight=80
     //% blockAllowMultiple=true
+    //% group="Game Loop"
     export function onSceneUpdate(sceneName: string, handler: () => void): void {
         ensureSceneExists(sceneName);
         
@@ -123,6 +129,7 @@ namespace sceneManager {
     //% sceneName.defl="Main"
     //% weight=85
     //% blockAllowMultiple=true
+    //% group="Game Loop"
     export function onSceneForever(sceneName: string, handler: () => void): void {
         ensureSceneExists(sceneName);
         
@@ -142,6 +149,7 @@ namespace sceneManager {
     //% ms.defl=500
     //% weight=75
     //% blockAllowMultiple=true
+    //% group="Game Loop"
     export function onSceneUpdateInterval(sceneName: string, ms: number, handler: () => void): void {
         ensureSceneExists(sceneName);
         
@@ -166,12 +174,237 @@ namespace sceneManager {
     //% event.fieldOptions.tooltips="false"
     //% weight=70
     //% blockAllowMultiple=true
+    //% group="Controller"
     export function onSceneButtonEvent(sceneName: string, btn: controller.Button, event: ControllerButtonEvent, handler: () => void): void {
         ensureSceneExists(sceneName);
         
         btn.addEventListener(event, () => {
             if (currentSceneId === sceneName) {
                 handler();
+            }
+        });
+    }
+
+    /**
+     * Run this code when sprites of these kinds overlap while the scene is active
+     */
+    //% blockId=sceneManagerOnSceneOverlap
+    //% block="on scene named $sceneName sprite $spriteKind overlaps $otherKind"
+    //% sceneName.defl="Main"
+    //% weight=65
+    //% blockAllowMultiple=true
+    //% spriteKind.shadow=spritekind
+    //% otherKind.shadow=spritekind
+    //% group="Sprites"
+    export function onSceneOverlap(sceneName: string, spriteKind: number, otherKind: number, handler: (sprite: Sprite, otherSprite: Sprite) => void): void {
+        ensureSceneExists(sceneName);
+        
+        sprites.onOverlap(spriteKind, otherKind, (sprite: Sprite, otherSprite: Sprite) => {
+            if (currentSceneId === sceneName) {
+                handler(sprite, otherSprite);
+            }
+        });
+    }
+
+    /**
+     * Run this code when a sprite of this kind is destroyed while the scene is active
+     */
+    //% blockId=sceneManagerOnSceneSpriteDestroyed
+    //% block="on scene named $sceneName sprite $spriteKind destroyed"
+    //% sceneName.defl="Main"
+    //% weight=64
+    //% blockAllowMultiple=true
+    //% spriteKind.shadow=spritekind
+    //% group="Sprites"
+    export function onSceneSpriteDestroyed(sceneName: string, spriteKind: number, handler: (sprite: Sprite) => void): void {
+        ensureSceneExists(sceneName);
+        
+        sprites.onDestroyed(spriteKind, (sprite: Sprite) => {
+            if (currentSceneId === sceneName) {
+                handler(sprite);
+            }
+        });
+    }
+
+    /**
+     * Run this code when a sprite of this kind hits a wall while the scene is active
+     */
+    //% blockId=sceneManagerOnSceneHitWall
+    //% block="on scene named $sceneName sprite $spriteKind hit wall"
+    //% sceneName.defl="Main"
+    //% weight=63
+    //% blockAllowMultiple=true
+    //% spriteKind.shadow=spritekind
+    //% group="Sprites"
+    export function onSceneHitWall(sceneName: string, spriteKind: number, handler: (sprite: Sprite) => void): void {
+        ensureSceneExists(sceneName);
+        
+        scene.onHitWall(spriteKind, (sprite: Sprite) => {
+            if (currentSceneId === sceneName) {
+                handler(sprite);
+            }
+        });
+    }
+
+    /**
+     * Run this code when life reaches zero while the scene is active
+     */
+    //% blockId=sceneManagerOnSceneLifeZero
+    //% block="on scene named $sceneName life zero"
+    //% sceneName.defl="Main"
+    //% weight=62
+    //% blockAllowMultiple=true
+    //% group="Info"
+    export function onSceneLifeZero(sceneName: string, handler: () => void): void {
+        ensureSceneExists(sceneName);
+        
+        info.onLifeZero(() => {
+            if (currentSceneId === sceneName) {
+                handler();
+            }
+        });
+    }
+
+    /**
+     * Run this code when countdown reaches zero while the scene is active
+     */
+    //% blockId=sceneManagerOnSceneCountdownEnd
+    //% block="on scene named $sceneName countdown end"
+    //% sceneName.defl="Main"
+    //% weight=61
+    //% blockAllowMultiple=true
+    //% group="Info"
+    export function onSceneCountdownEnd(sceneName: string, handler: () => void): void {
+        ensureSceneExists(sceneName);
+        
+        info.onCountdownEnd(() => {
+            if (currentSceneId === sceneName) {
+                handler();
+            }
+        });
+    }
+
+    /**
+     * Run this code when score reaches the given value while the scene is active
+     */
+    //% blockId=sceneManagerOnSceneScoreChange
+    //% block="on scene named $sceneName score $score"
+    //% sceneName.defl="Main"
+    //% score.defl=100
+    //% weight=60
+    //% blockAllowMultiple=true
+    //% group="Info"
+    export function onSceneScoreChange(sceneName: string, score: number, handler: () => void): void {
+        ensureSceneExists(sceneName);
+        
+        info.onScore(score, () => {
+            if (currentSceneId === sceneName) {
+                handler();
+            }
+        });
+    }
+
+    /**
+     * Run this code when a specific player's button event occurs while the scene is active
+     */
+    //% blockId=sceneManagerOnScenePlayerButtonEvent
+    //% block="on scene named $sceneName player $player $btn $event"
+    //% sceneName.defl="Main"
+    //% player.shadow=mp_controller_selector
+    //% btn.fieldEditor="gridpicker"
+    //% btn.fieldOptions.columns=4
+    //% btn.fieldOptions.tooltips="false"
+    //% event.fieldEditor="gridpicker"
+    //% event.fieldOptions.columns=3
+    //% event.fieldOptions.tooltips="false"
+    //% weight=59
+    //% blockAllowMultiple=true
+    //% group="Multiplayer"
+    export function onScenePlayerButtonEvent(sceneName: string, player: controller.Controller, btn: controller.Button, event: ControllerButtonEvent, handler: () => void): void {
+        ensureSceneExists(sceneName);
+        
+        player.onButtonEvent(btn, event, () => {
+            if (currentSceneId === sceneName) {
+                handler();
+            }
+        });
+    }
+
+    /**
+     * Run this code when a multiplayer controller event occurs while the scene is active
+     */
+    //% blockId=sceneManagerOnSceneControllerEvent
+    //% block="on scene named $sceneName controller $player connected $connected"
+    //% sceneName.defl="Main"
+    //% player.shadow=mp_controller_selector
+    //% weight=58
+    //% blockAllowMultiple=true
+    //% group="Multiplayer"
+    export function onSceneControllerEvent(sceneName: string, player: controller.Controller, connected: boolean, handler: () => void): void {
+        ensureSceneExists(sceneName);
+        
+        mp.onControllerEvent(player, connected, () => {
+            if (currentSceneId === sceneName) {
+                handler();
+            }
+        });
+    }
+
+    /**
+     * Run this code when a player's score changes while the scene is active
+     */
+    //% blockId=sceneManagerOnSceneScoreMP
+    //% block="on scene named $sceneName player $player score $score"
+    //% sceneName.defl="Main"
+    //% player.shadow=mp_controller_selector
+    //% score.defl=100
+    //% weight=57
+    //% blockAllowMultiple=true
+    //% group="Multiplayer"
+    export function onSceneScoreMP(sceneName: string, player: controller.Controller, score: number, handler: () => void): void {
+        ensureSceneExists(sceneName);
+        
+        mp.onScore(player, score, () => {
+            if (currentSceneId === sceneName) {
+                handler();
+            }
+        });
+    }
+
+    /**
+     * Run this code when shared life counter reaches zero while the scene is active
+     */
+    //% blockId=sceneManagerOnSceneSharedLifeZero
+    //% block="on scene named $sceneName shared life zero"
+    //% sceneName.defl="Main"
+    //% weight=56
+    //% blockAllowMultiple=true
+    //% group="Multiplayer"
+    export function onSceneSharedLifeZero(sceneName: string, handler: () => void): void {
+        ensureSceneExists(sceneName);
+        
+        mp.onSharedLifeZero(() => {
+            if (currentSceneId === sceneName) {
+                handler();
+            }
+        });
+    }
+    
+    /**
+     * Run this code when a player dies (runs out of lives) while the scene is active
+     */
+    //% blockId=sceneManagerOnScenePlayerDied
+    //% block="on scene named $sceneName player died"
+    //% sceneName.defl="Main"
+    //% weight=55
+    //% blockAllowMultiple=true
+    //% group="Multiplayer"
+    export function onScenePlayerDied(sceneName: string, handler: (player: number) => void): void {
+        ensureSceneExists(sceneName);
+        
+        mp.onPlayerDied((player: number) => {
+            if (currentSceneId === sceneName) {
+                handler(player);
             }
         });
     }

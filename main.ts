@@ -1,5 +1,5 @@
 //% weight=100 color=#6d5ba4 icon="\uf24d" block="Scene Manager"
-//% groups="['Scene Management', 'Scene Lifecycle', 'Game Loop', 'Controller', 'Sprites', 'Info', 'Multiplayer']"
+//% groups=["Scene Management","Scene Lifecycle","Game Loop","Controller","Sprites","Info","Multiplayer"]
 namespace sceneManager {
     interface SceneData {
         name: string;

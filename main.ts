@@ -20,6 +20,7 @@ namespace sceneManager {
 
     /**
      * Check if a scene with the given name exists
+     * @param name The name of the scene
      */
     //% blockId=sceneManagerSceneExists
     //% block="scene named $name exists"
@@ -31,6 +32,7 @@ namespace sceneManager {
 
     /**
      * Transition to the scene with the given name
+     * @param name The name of the scene
      */
     //% blockId=sceneManagerTransitionTo
     //% block="transition to scene named $name"
@@ -68,6 +70,8 @@ namespace sceneManager {
 
     /**
      * Run this code when entering the scene
+     * @param sceneName The name of the scene
+     * @param handler The code to run
      */
     //% blockId=sceneManagerOnSceneSetup
     //% block="on scene named $sceneName setup" 
@@ -86,6 +90,8 @@ namespace sceneManager {
 
     /**
      * Run this code when leaving the scene
+     * @param sceneName The name of the scene
+     * @param handler The code to run
      */
     //% blockId=sceneManagerOnSceneCleanup
     //% block="on scene named $sceneName cleanup"
@@ -104,6 +110,8 @@ namespace sceneManager {
 
     /**
      * Run this code on each game update while the scene is active
+     * @param sceneName The name of the scene
+     * @param handler The code to run
      */
     //% blockId=sceneManagerOnSceneUpdate
     //% block="on scene named $sceneName update"
@@ -123,6 +131,8 @@ namespace sceneManager {
 
     /**
      * Run this code repeatedly while the scene is active
+     * @param sceneName The name of the scene
+     * @param handler The code to run
      */
     //% blockId=sceneManagerOnSceneForever
     //% block="on scene named $sceneName forever"
@@ -142,6 +152,9 @@ namespace sceneManager {
 
     /**
      * Run this code periodically while the scene is active
+     * @param sceneName The name of the scene
+     * @param ms The interval in milliseconds
+     * @param handler The code to run
      */
     //% blockId=sceneManagerOnSceneUpdateInterval
     //% block="on scene named $sceneName every $ms ms"
@@ -162,6 +175,10 @@ namespace sceneManager {
 
     /**
      * Run this code when a controller button event occurs while the scene is active
+     * @param sceneName The name of the scene
+     * @param btn The button to monitor
+     * @param event The button event type
+     * @param handler The code to run
      */
     //% blockId=sceneManagerOnSceneButtonEvent
     //% block="on scene named $sceneName $btn $event"
@@ -187,6 +204,10 @@ namespace sceneManager {
 
     /**
      * Run this code when sprites of these kinds overlap while the scene is active
+     * @param sceneName The name of the scene
+     * @param spriteKind The kind of the first sprite
+     * @param otherKind The kind of the other sprite
+     * @param handler The code to run
      */
     //% blockId=sceneManagerOnSceneOverlap
     //% block="on scene named $sceneName sprite $spriteKind overlaps $otherKind"
@@ -208,6 +229,9 @@ namespace sceneManager {
 
     /**
      * Run this code when a sprite of this kind is destroyed while the scene is active
+     * @param sceneName The name of the scene
+     * @param spriteKind The kind of the sprite
+     * @param handler The code to run
      */
     //% blockId=sceneManagerOnSceneSpriteDestroyed
     //% block="on scene named $sceneName sprite $spriteKind destroyed"
@@ -228,6 +252,9 @@ namespace sceneManager {
 
     /**
      * Run this code when a sprite of this kind hits a wall while the scene is active
+     * @param sceneName The name of the scene
+     * @param spriteKind The kind of the sprite
+     * @param handler The code to run
      */
     //% blockId=sceneManagerOnSceneHitWall
     //% block="on scene named $sceneName sprite $spriteKind hit wall"
@@ -248,6 +275,8 @@ namespace sceneManager {
 
     /**
      * Run this code when life reaches zero while the scene is active
+     * @param sceneName The name of the scene
+     * @param handler The code to run
      */
     //% blockId=sceneManagerOnSceneLifeZero
     //% block="on scene named $sceneName life zero"
@@ -267,6 +296,8 @@ namespace sceneManager {
 
     /**
      * Run this code when countdown reaches zero while the scene is active
+     * @param sceneName The name of the scene
+     * @param handler The code to run
      */
     //% blockId=sceneManagerOnSceneCountdownEnd
     //% block="on scene named $sceneName countdown end"
@@ -286,6 +317,9 @@ namespace sceneManager {
 
     /**
      * Run this code when score reaches the given value while the scene is active
+     * @param sceneName The name of the scene
+     * @param score The score value to monitor
+     * @param handler The code to run
      */
     //% blockId=sceneManagerOnSceneScoreChange
     //% block="on scene named $sceneName score $score"
@@ -306,6 +340,11 @@ namespace sceneManager {
 
     /**
      * Run this code when a specific player's button event occurs while the scene is active
+     * @param sceneName The name of the scene
+     * @param player The player to monitor
+     * @param btn The button to monitor
+     * @param event The button event type
+     * @param handler The code to run
      */
     //% blockId=sceneManagerOnScenePlayerButtonEvent
     //% block="on scene named $sceneName player $player $btn $event"
@@ -332,6 +371,10 @@ namespace sceneManager {
 
     /**
      * Run this code when a controller gets connected or disconnected while the scene is active
+     * @param sceneName The name of the scene
+     * @param player The player to monitor
+     * @param state The controller event type
+     * @param handler The code to run
      */
     //% blockId=sceneManagerOnSceneControllerEvent
     //% block="on scene named $sceneName when player $player $state"
@@ -353,6 +396,10 @@ namespace sceneManager {
 
     /**
      * Run this code when a player's score reaches a value while the scene is active
+     * @param sceneName The name of the scene
+     * @param player The player to monitor
+     * @param score The score value to monitor
+     * @param handler The code to run
      */
     //% blockId=sceneManagerOnScenePlayerScore
     //% block="on scene named $sceneName player $player score $score"
@@ -374,6 +421,9 @@ namespace sceneManager {
 
     /**
      * Run this code when a player's life reaches zero while the scene is active
+     * @param sceneName The name of the scene
+     * @param player The player to monitor
+     * @param handler The code to run
      */
     //% blockId=sceneManagerOnScenePlayerLifeZero
     //% block="on scene named $sceneName player $player life zero"

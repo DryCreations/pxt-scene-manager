@@ -354,6 +354,7 @@ namespace sceneManager {
     //% block="on scene named $sceneName player $player $btn $event"
     //% sceneName.defl="Main"
     //% player.shadow=multiplayer_player_picker
+    //% player.defl=controller.player1
     //% btn.fieldEditor="gridpicker"
     //% btn.fieldOptions.columns=4
     //% btn.fieldOptions.tooltips="false"
@@ -384,6 +385,7 @@ namespace sceneManager {
     //% block="on scene named $sceneName when player $player $state"
     //% sceneName.defl="Main"
     //% player.shadow=multiplayer_player_picker
+    //% player.defl=controller.player1
     //% state.shadow=controller_event_value_picker
     //% weight=40
     //% blockAllowMultiple=true
@@ -409,6 +411,7 @@ namespace sceneManager {
     //% block="on scene named $sceneName player $player score $score"
     //% sceneName.defl="Main"
     //% player.shadow=multiplayer_player_picker
+    //% player.defl=controller.player1
     //% score.defl=100
     //% weight=30
     //% blockAllowMultiple=true
@@ -433,6 +436,7 @@ namespace sceneManager {
     //% block="on scene named $sceneName player $player life zero"
     //% sceneName.defl="Main"
     //% player.shadow=multiplayer_player_picker
+    //% player.defl=controller.player1
     //% weight=20
     //% blockAllowMultiple=true
     //% group="Multiplayer"

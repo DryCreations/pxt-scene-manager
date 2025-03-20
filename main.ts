@@ -3,10 +3,10 @@ namespace sceneManager {
     interface SceneData {
         name: string;
     }
-    
+
     let scenes: { [key: string]: SceneData } = {};
     let currentSceneId: string = null;
-    
+
     let setupHandlers: { [key: string]: (() => void)[] } = {};
     let cleanupHandlers: { [key: string]: (() => void)[] } = {};
 
@@ -38,16 +38,16 @@ namespace sceneManager {
     //% group="Scene Management"
     export function transitionTo(name: string): void {
         ensureSceneExists(name);
-        
+
         if (currentSceneId && cleanupHandlers[currentSceneId]) {
             const handlers = cleanupHandlers[currentSceneId];
             for (const handler of handlers) {
                 handler();
             }
         }
-        
+
         currentSceneId = name;
-        
+
         if (setupHandlers[currentSceneId]) {
             const handlers = setupHandlers[currentSceneId];
             for (const handler of handlers) {
@@ -77,7 +77,7 @@ namespace sceneManager {
     //% group="Scene Lifecycle"
     export function onSceneSetup(sceneName: string, handler: () => void): void {
         ensureSceneExists(sceneName);
-        
+
         if (!setupHandlers[sceneName]) {
             setupHandlers[sceneName] = [];
         }
@@ -95,7 +95,7 @@ namespace sceneManager {
     //% group="Scene Lifecycle"
     export function onSceneCleanup(sceneName: string, handler: () => void): void {
         ensureSceneExists(sceneName);
-        
+
         if (!cleanupHandlers[sceneName]) {
             cleanupHandlers[sceneName] = [];
         }
@@ -113,7 +113,7 @@ namespace sceneManager {
     //% group="Game Loop"
     export function onSceneUpdate(sceneName: string, handler: () => void): void {
         ensureSceneExists(sceneName);
-        
+
         game.onUpdate(() => {
             if (currentSceneId === sceneName) {
                 handler();
@@ -132,7 +132,7 @@ namespace sceneManager {
     //% group="Game Loop"
     export function onSceneForever(sceneName: string, handler: () => void): void {
         ensureSceneExists(sceneName);
-        
+
         forever(() => {
             if (currentSceneId === sceneName) {
                 handler();
@@ -152,7 +152,7 @@ namespace sceneManager {
     //% group="Game Loop"
     export function onSceneUpdateInterval(sceneName: string, ms: number, handler: () => void): void {
         ensureSceneExists(sceneName);
-        
+
         game.onUpdateInterval(ms, () => {
             if (currentSceneId === sceneName) {
                 handler();
@@ -177,7 +177,7 @@ namespace sceneManager {
     //% group="Controller"
     export function onSceneButtonEvent(sceneName: string, btn: controller.Button, event: ControllerButtonEvent, handler: () => void): void {
         ensureSceneExists(sceneName);
-        
+
         btn.addEventListener(event, () => {
             if (currentSceneId === sceneName) {
                 handler();
@@ -198,7 +198,7 @@ namespace sceneManager {
     //% group="Sprites"
     export function onSceneOverlap(sceneName: string, spriteKind: number, otherKind: number, handler: (sprite: Sprite, otherSprite: Sprite) => void): void {
         ensureSceneExists(sceneName);
-        
+
         sprites.onOverlap(spriteKind, otherKind, (sprite: Sprite, otherSprite: Sprite) => {
             if (currentSceneId === sceneName) {
                 handler(sprite, otherSprite);
@@ -218,7 +218,7 @@ namespace sceneManager {
     //% group="Sprites"
     export function onSceneSpriteDestroyed(sceneName: string, spriteKind: number, handler: (sprite: Sprite) => void): void {
         ensureSceneExists(sceneName);
-        
+
         sprites.onDestroyed(spriteKind, (sprite: Sprite) => {
             if (currentSceneId === sceneName) {
                 handler(sprite);
@@ -238,7 +238,7 @@ namespace sceneManager {
     //% group="Sprites"
     export function onSceneHitWall(sceneName: string, spriteKind: number, handler: (sprite: Sprite) => void): void {
         ensureSceneExists(sceneName);
-        
+
         scene.onHitWall(spriteKind, (sprite: Sprite) => {
             if (currentSceneId === sceneName) {
                 handler(sprite);
@@ -257,7 +257,7 @@ namespace sceneManager {
     //% group="Info"
     export function onSceneLifeZero(sceneName: string, handler: () => void): void {
         ensureSceneExists(sceneName);
-        
+
         info.onLifeZero(() => {
             if (currentSceneId === sceneName) {
                 handler();
@@ -276,7 +276,7 @@ namespace sceneManager {
     //% group="Info"
     export function onSceneCountdownEnd(sceneName: string, handler: () => void): void {
         ensureSceneExists(sceneName);
-        
+
         info.onCountdownEnd(() => {
             if (currentSceneId === sceneName) {
                 handler();
@@ -296,7 +296,7 @@ namespace sceneManager {
     //% group="Info"
     export function onSceneScoreChange(sceneName: string, score: number, handler: () => void): void {
         ensureSceneExists(sceneName);
-        
+
         info.onScore(score, () => {
             if (currentSceneId === sceneName) {
                 handler();
@@ -310,7 +310,7 @@ namespace sceneManager {
     //% blockId=sceneManagerOnScenePlayerButtonEvent
     //% block="on scene named $sceneName player $player $btn $event"
     //% sceneName.defl="Main"
-    //% player.shadow=mp_controller_selector
+    //% player.shadow=multiplayer_player_picker
     //% btn.fieldEditor="gridpicker"
     //% btn.fieldOptions.columns=4
     //% btn.fieldOptions.tooltips="false"
@@ -320,9 +320,9 @@ namespace sceneManager {
     //% weight=59
     //% blockAllowMultiple=true
     //% group="Multiplayer"
-    export function onScenePlayerButtonEvent(sceneName: string, player: controller.Controller, btn: controller.Button, event: ControllerButtonEvent, handler: () => void): void {
+    export function onScenePlayerButtonEvent(sceneName: string, player: controller.Controller, btn: ControllerButton, event: ControllerButtonEvent, handler: () => void): void {
         ensureSceneExists(sceneName);
-        
+
         player.onButtonEvent(btn, event, () => {
             if (currentSceneId === sceneName) {
                 handler();
@@ -331,19 +331,20 @@ namespace sceneManager {
     }
 
     /**
-     * Run this code when a multiplayer controller event occurs while the scene is active
+     * Run this code when a controller gets connected or disconnected while the scene is active
      */
     //% blockId=sceneManagerOnSceneControllerEvent
-    //% block="on scene named $sceneName controller $player connected $connected"
+    //% block="on scene named $sceneName when player $player $state"
     //% sceneName.defl="Main"
-    //% player.shadow=mp_controller_selector
+    //% player.shadow=multiplayer_player_picker
+    //% state.shadow=controller_event_value_picker
     //% weight=58
     //% blockAllowMultiple=true
     //% group="Multiplayer"
-    export function onSceneControllerEvent(sceneName: string, player: controller.Controller, connected: boolean, handler: () => void): void {
+    export function onSceneControllerEvent(sceneName: string, player: controller.Controller, state: ControllerEvent, handler: () => void): void {
         ensureSceneExists(sceneName);
-        
-        mp.onControllerEvent(player, connected, () => {
+
+        player.onEvent(state, () => {
             if (currentSceneId === sceneName) {
                 handler();
             }
@@ -351,20 +352,20 @@ namespace sceneManager {
     }
 
     /**
-     * Run this code when a player's score changes while the scene is active
+     * Run this code when a player's score reaches a value while the scene is active
      */
-    //% blockId=sceneManagerOnSceneScoreMP
+    //% blockId=sceneManagerOnScenePlayerScore
     //% block="on scene named $sceneName player $player score $score"
     //% sceneName.defl="Main"
-    //% player.shadow=mp_controller_selector
+    //% player.shadow=multiplayer_player_picker
     //% score.defl=100
     //% weight=57
     //% blockAllowMultiple=true
     //% group="Multiplayer"
-    export function onSceneScoreMP(sceneName: string, player: controller.Controller, score: number, handler: () => void): void {
+    export function onScenePlayerScore(sceneName: string, player: info.PlayerInfo, score: number, handler: () => void): void {
         ensureSceneExists(sceneName);
-        
-        mp.onScore(player, score, () => {
+
+        player.onScore(score, () => {
             if (currentSceneId === sceneName) {
                 handler();
             }
@@ -372,39 +373,21 @@ namespace sceneManager {
     }
 
     /**
-     * Run this code when shared life counter reaches zero while the scene is active
+     * Run this code when a player's life reaches zero while the scene is active
      */
-    //% blockId=sceneManagerOnSceneSharedLifeZero
-    //% block="on scene named $sceneName shared life zero"
+    //% blockId=sceneManagerOnScenePlayerLifeZero
+    //% block="on scene named $sceneName player $player life zero"
     //% sceneName.defl="Main"
+    //% player.shadow=multiplayer_player_picker
     //% weight=56
     //% blockAllowMultiple=true
     //% group="Multiplayer"
-    export function onSceneSharedLifeZero(sceneName: string, handler: () => void): void {
+    export function onScenePlayerLifeZero(sceneName: string, player: info.PlayerInfo, handler: () => void): void {
         ensureSceneExists(sceneName);
-        
-        mp.onSharedLifeZero(() => {
+
+        player.onLifeZero(() => {
             if (currentSceneId === sceneName) {
                 handler();
-            }
-        });
-    }
-    
-    /**
-     * Run this code when a player dies (runs out of lives) while the scene is active
-     */
-    //% blockId=sceneManagerOnScenePlayerDied
-    //% block="on scene named $sceneName player died"
-    //% sceneName.defl="Main"
-    //% weight=55
-    //% blockAllowMultiple=true
-    //% group="Multiplayer"
-    export function onScenePlayerDied(sceneName: string, handler: (player: number) => void): void {
-        ensureSceneExists(sceneName);
-        
-        mp.onPlayerDied((player: number) => {
-            if (currentSceneId === sceneName) {
-                handler(player);
             }
         });
     }

@@ -5,6 +5,30 @@ namespace sceneManager {
         name: string;
     }
 
+    /**
+     * Player numbers for multiplayer functionality
+     */
+    export enum PlayerNumber {
+        //% block="player 1"
+        One = 1,
+        //% block="player 2"
+        Two = 2,
+        //% block="player 3"
+        Three = 3,
+        //% block="player 4"
+        Four = 4
+    }
+
+    /**
+     * Controller connection events
+     */
+    export enum ControllerEventType {
+        //% block="connected"
+        Connected = 0,
+        //% block="disconnected"
+        Disconnected = 1
+    }
+
     let scenes: { [key: string]: SceneData } = {};
     let currentSceneId: string = null;
 
@@ -207,73 +231,6 @@ namespace sceneManager {
     }
 
     /**
-     * Run this code when sprites of these kinds overlap while the scene is active
-     * @param sceneName The name of the scene
-     * @param spriteKind The kind of the first sprite
-     * @param otherKind The kind of the other sprite
-     * @param handler The code to run
-     */
-    //% blockId=sceneManagerOnSceneOverlap
-    //% block="on scene named $sceneName sprite kind $spriteKind overlaps kind $otherKind"
-    //% sceneName.defl="Main"
-    //% weight=110
-    //% blockAllowMultiple=true
-    //% group="Sprites"
-    export function onSceneOverlap(sceneName: string, spriteKind: number, otherKind: number, handler: (sprite: Sprite, otherSprite: Sprite) => void): void {
-        ensureSceneExists(sceneName);
-
-        sprites.onOverlap(spriteKind, otherKind, (sprite: Sprite, otherSprite: Sprite) => {
-            if (currentSceneId === sceneName) {
-                handler(sprite, otherSprite);
-            }
-        });
-    }
-
-    /**
-     * Run this code when a sprite of this kind is destroyed while the scene is active
-     * @param sceneName The name of the scene
-     * @param spriteKind The kind of the sprite
-     * @param handler The code to run
-     */
-    //% blockId=sceneManagerOnSceneSpriteDestroyed
-    //% block="on scene named $sceneName sprite kind $spriteKind destroyed"
-    //% sceneName.defl="Main"
-    //% weight=100
-    //% blockAllowMultiple=true
-    //% group="Sprites"
-    export function onSceneSpriteDestroyed(sceneName: string, spriteKind: number, handler: (sprite: Sprite) => void): void {
-        ensureSceneExists(sceneName);
-
-        sprites.onDestroyed(spriteKind, (sprite: Sprite) => {
-            if (currentSceneId === sceneName) {
-                handler(sprite);
-            }
-        });
-    }
-
-    /**
-     * Run this code when a sprite of this kind hits a wall while the scene is active
-     * @param sceneName The name of the scene
-     * @param spriteKind The kind of the sprite
-     * @param handler The code to run
-     */
-    //% blockId=sceneManagerOnSceneHitWall
-    //% block="on scene named $sceneName sprite kind $spriteKind hit wall"
-    //% sceneName.defl="Main"
-    //% weight=90
-    //% blockAllowMultiple=true
-    //% group="Sprites"
-    export function onSceneHitWall(sceneName: string, spriteKind: number, handler: (sprite: Sprite) => void): void {
-        ensureSceneExists(sceneName);
-
-        scene.onHitWall(spriteKind, (sprite: Sprite) => {
-            if (currentSceneId === sceneName) {
-                handler(sprite);
-            }
-        });
-    }
-
-    /**
      * Run this code when life reaches zero while the scene is active
      * @param sceneName The name of the scene
      * @param handler The code to run
@@ -349,7 +306,7 @@ namespace sceneManager {
     //% blockId=sceneManagerOnScenePlayerButtonEvent
     //% block="on scene named $sceneName player $playerNum $btn $event"
     //% sceneName.defl="Main"
-    //% playerNum.min=1 playerNum.max=4 playerNum.defl=1
+    //% playerNum.shadow=sceneManagerPlayerNumber
     //% btn.fieldEditor="gridpicker"
     //% btn.fieldOptions.columns=4
     //% btn.fieldOptions.tooltips="false"
@@ -359,14 +316,14 @@ namespace sceneManager {
     //% weight=50
     //% blockAllowMultiple=true
     //% group="Multiplayer"
-    export function onScenePlayerButtonEvent(sceneName: string, playerNum: number, btn: ControllerButton, event: ControllerButtonEvent, handler: () => void): void {
+    export function onScenePlayerButtonEvent(sceneName: string, playerNum: PlayerNumber, btn: ControllerButton, event: ControllerButtonEvent, handler: () => void): void {
         ensureSceneExists(sceneName);
-        
-        const player = playerNum === 1 ? controller.player1 : 
-                       playerNum === 2 ? controller.player2 : 
-                       playerNum === 3 ? controller.player3 : 
-                       controller.player4;
-        
+
+        const player = playerNum === PlayerNumber.One ? controller.player1 :
+            playerNum === PlayerNumber.Two ? controller.player2 :
+                playerNum === PlayerNumber.Three ? controller.player3 :
+                    controller.player4;
+
         player.onButtonEvent(btn, event, () => {
             if (currentSceneId === sceneName) {
                 handler();
@@ -378,27 +335,27 @@ namespace sceneManager {
      * Run this code when a controller gets connected or disconnected while the scene is active
      * @param sceneName The name of the scene
      * @param playerNum The player number (1-4)
-     * @param eventType The connection event (0 for connected, 1 for disconnected)
+     * @param eventType The connection event (connected or disconnected)
      * @param handler The code to run
      */
     //% blockId=sceneManagerOnSceneControllerEvent
-    //% block="on scene named $sceneName when player $playerNum $eventType"
+    //% block="on scene named $sceneName when $playerNum $eventType"
     //% sceneName.defl="Main"
-    //% playerNum.min=1 playerNum.max=4 playerNum.defl=1
-    //% eventType.defl=0 eventType.min=0 eventType.max=1
+    //% playerNum.shadow=sceneManagerPlayerNumber
+    //% eventType.shadow=sceneManagerControllerEventType
     //% weight=40
     //% blockAllowMultiple=true
     //% group="Multiplayer"
-    export function onSceneControllerEvent(sceneName: string, playerNum: number, eventType: number, handler: () => void): void {
+    export function onSceneControllerEvent(sceneName: string, playerNum: PlayerNumber, eventType: ControllerEventType, handler: () => void): void {
         ensureSceneExists(sceneName);
-        
-        const player = playerNum === 1 ? controller.player1 : 
-                       playerNum === 2 ? controller.player2 : 
-                       playerNum === 3 ? controller.player3 : 
-                       controller.player4;
-        
-        const event = eventType === 0 ? ControllerEvent.Connected : ControllerEvent.Disconnected;
-        
+
+        const player = playerNum === PlayerNumber.One ? controller.player1 :
+            playerNum === PlayerNumber.Two ? controller.player2 :
+                playerNum === PlayerNumber.Three ? controller.player3 :
+                    controller.player4;
+
+        const event = eventType === ControllerEventType.Connected ? ControllerEvent.Connected : ControllerEvent.Disconnected;
+
         player.onEvent(event, () => {
             if (currentSceneId === sceneName) {
                 handler();
@@ -414,21 +371,21 @@ namespace sceneManager {
      * @param handler The code to run
      */
     //% blockId=sceneManagerOnScenePlayerScore
-    //% block="on scene named $sceneName player $playerNum score $score"
+    //% block="on scene named $sceneName $playerNum score $score"
     //% sceneName.defl="Main"
-    //% playerNum.min=1 playerNum.max=4 playerNum.defl=1
+    //% playerNum.shadow=sceneManagerPlayerNumber
     //% score.defl=100
     //% weight=30
     //% blockAllowMultiple=true
     //% group="Multiplayer"
-    export function onScenePlayerScore(sceneName: string, playerNum: number, score: number, handler: () => void): void {
+    export function onScenePlayerScore(sceneName: string, playerNum: PlayerNumber, score: number, handler: () => void): void {
         ensureSceneExists(sceneName);
-        
-        const playerInfo = playerNum === 1 ? info.player1 :
-                          playerNum === 2 ? info.player2 :
-                          playerNum === 3 ? info.player3 :
-                          info.player4;
-        
+
+        const playerInfo = playerNum === PlayerNumber.One ? info.player1 :
+            playerNum === PlayerNumber.Two ? info.player2 :
+                playerNum === PlayerNumber.Three ? info.player3 :
+                    info.player4;
+
         playerInfo.onScore(score, () => {
             if (currentSceneId === sceneName) {
                 handler();
@@ -443,24 +400,46 @@ namespace sceneManager {
      * @param handler The code to run
      */
     //% blockId=sceneManagerOnScenePlayerLifeZero
-    //% block="on scene named $sceneName player $playerNum life zero"
+    //% block="on scene named $sceneName $playerNum life zero"
     //% sceneName.defl="Main"
-    //% playerNum.min=1 playerNum.max=4 playerNum.defl=1
+    //% playerNum.shadow=sceneManagerPlayerNumber
     //% weight=20
     //% blockAllowMultiple=true
     //% group="Multiplayer"
-    export function onScenePlayerLifeZero(sceneName: string, playerNum: number, handler: () => void): void {
+    export function onScenePlayerLifeZero(sceneName: string, playerNum: PlayerNumber, handler: () => void): void {
         ensureSceneExists(sceneName);
-        
-        const playerInfo = playerNum === 1 ? info.player1 :
-                          playerNum === 2 ? info.player2 :
-                          playerNum === 3 ? info.player3 :
-                          info.player4;
-        
+
+        const playerInfo = playerNum === PlayerNumber.One ? info.player1 :
+            playerNum === PlayerNumber.Two ? info.player2 :
+                playerNum === PlayerNumber.Three ? info.player3 :
+                    info.player4;
+
         playerInfo.onLifeZero(() => {
             if (currentSceneId === sceneName) {
                 handler();
             }
         });
+    }
+
+    /**
+     * Creates a shadow block for player number selection
+     */
+    //% blockId=sceneManagerPlayerNumber
+    //% block="$playerNumber"
+    //% blockHidden=true
+    //% shim=TD_ID
+    export function _playerNumber(playerNumber: PlayerNumber): PlayerNumber {
+        return playerNumber;
+    }
+
+    /**
+     * Creates a shadow block for controller event type selection
+     */
+    //% blockId=sceneManagerControllerEventType
+    //% block="$eventType"
+    //% blockHidden=true
+    //% shim=TD_ID
+    export function _controllerEventType(eventType: ControllerEventType): ControllerEventType {
+        return eventType;
     }
 }
